@@ -2,6 +2,16 @@
 
 PlotDrop is a small Python desktop application for Linux and macOS. Drop numeric data files onto the window and PlotDrop draws the curves with Matplotlib.
 
+## Features
+
+- drag and drop local `.txt`, `.dat`, `.csv`, and `.tsv` files;
+- plot multiple datasets in one Matplotlib figure;
+- show loaded datasets with point counts and load status;
+- switch axis scale between `linear`, `logx`, `logy`, and `loglog`;
+- toggle a plot grid;
+- use the native Matplotlib toolbar for zoom, pan, reset, and quick save;
+- export the current figure as PNG, PDF, or SVG.
+
 ## Development install
 
 ```bash
@@ -15,6 +25,8 @@ pip install -e ".[dev]"
 ```bash
 plotdrop
 ```
+
+You can also open files from the File menu if drag and drop is inconvenient.
 
 ## Data format
 
@@ -52,7 +64,7 @@ Example files are available in `examples/`.
 
 ## Export
 
-The Export button saves the current figure with its current axis scale. PNG is exported at 300 dpi. PDF and SVG are exported as vector formats.
+The Export button saves the current figure exactly as displayed, including the current scale and grid setting. PNG is exported at 300 dpi. PDF and SVG are exported as vector formats.
 
 ## Tests
 
