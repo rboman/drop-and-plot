@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (
     QMainWindow,
     QMessageBox,
     QPushButton,
+    QSizePolicy,
     QTableWidget,
     QTableWidgetItem,
     QVBoxLayout,
@@ -131,6 +132,8 @@ class MainWindow(QMainWindow):
         outer = QHBoxLayout(central)
 
         side_panel = QWidget(central)
+        side_panel.setMinimumWidth(380)
+        side_panel.setMaximumWidth(480)
         side_layout = QVBoxLayout(side_panel)
         side_layout.addWidget(QLabel("Datasets"))
         side_layout.addWidget(self.dataset_table)
@@ -148,8 +151,8 @@ class MainWindow(QMainWindow):
         side_layout.addWidget(self.scale_combo)
         side_layout.addStretch()
 
-        outer.addWidget(side_panel, 1)
-        outer.addWidget(self.plot_widget, 3)
+        outer.addWidget(side_panel)
+        outer.addWidget(self.plot_widget, 1)
         self.setCentralWidget(central)
 
     def _build_menu(self) -> None:
@@ -173,10 +176,16 @@ class MainWindow(QMainWindow):
         table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         table.setAlternatingRowColors(True)
+        table.setWordWrap(False)
+        table.setMinimumHeight(150)
+        table.setMaximumHeight(280)
+        table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
-        table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
-        table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
+        table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Fixed)
+        table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)
         table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
+        table.setColumnWidth(1, 62)
+        table.setColumnWidth(2, 72)
         return table
 
     def _build_scale_combo(self) -> QComboBox:
@@ -196,6 +205,10 @@ class MainWindow(QMainWindow):
             ]
             for column, value in enumerate(values):
                 item = QTableWidgetItem(value)
+                if column == 0:
+                    item.setToolTip(entry.name)
+                if column == 3 and entry.message:
+                    item.setToolTip(entry.message)
                 if entry.status == "Error":
                     item.setToolTip(entry.message)
                 self.dataset_table.setItem(row, column, item)
