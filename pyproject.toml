@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "plotdrop"
+version = "0.1.0"
+description = "A small desktop app for plotting dropped numeric data files."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+  { name = "PlotDrop Contributors" },
+]
+dependencies = [
+  "matplotlib",
+  "numpy",
+  "PySide6",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+]
+
+[project.scripts]
+plotdrop = "plotdrop.main:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
