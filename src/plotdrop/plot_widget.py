@@ -41,6 +41,7 @@ class PlotWidget(QWidget):
         super().__init__(parent)
         self._datasets: list[Dataset] = []
         self._scale_mode = "linear"
+        self._grid_visible = False
 
         self.figure = Figure(figsize=DEFAULT_FIGURE_SIZE)
         self.canvas = FigureCanvasQTAgg(self.figure)
@@ -80,6 +81,10 @@ class PlotWidget(QWidget):
             self._redraw()
             raise
 
+    def set_grid_visible(self, visible: bool) -> PlotScaleWarning | None:
+        self._grid_visible = visible
+        return self._redraw()
+
     def save(self, path: str | Path) -> Path:
         return save_figure(self.figure, path)
 
@@ -89,6 +94,7 @@ class PlotWidget(QWidget):
         self._apply_axis_scale()
         self.axes.set_xlabel("x")
         self.axes.set_ylabel("y")
+        self.axes.grid(self._grid_visible, which="both", linestyle=":", linewidth=0.7, alpha=0.7)
         if self.axes.lines:
             self.axes.legend()
         self.figure.tight_layout()

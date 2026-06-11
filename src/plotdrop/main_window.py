@@ -5,6 +5,7 @@ from pathlib import Path
 
 from PySide6.QtGui import QAction, QDragEnterEvent, QDropEvent
 from PySide6.QtWidgets import (
+    QCheckBox,
     QComboBox,
     QFileDialog,
     QHBoxLayout,
@@ -49,6 +50,7 @@ class MainWindow(QMainWindow):
         self.plot_widget = PlotWidget(self)
         self.dataset_table = self._build_dataset_table()
         self.scale_combo = self._build_scale_combo()
+        self.grid_checkbox = self._build_grid_checkbox()
 
         self._build_layout()
         self._build_menu()
@@ -149,6 +151,7 @@ class MainWindow(QMainWindow):
 
         side_layout.addWidget(QLabel("Scale"))
         side_layout.addWidget(self.scale_combo)
+        side_layout.addWidget(self.grid_checkbox)
         side_layout.addStretch()
 
         outer.addWidget(side_panel)
@@ -193,6 +196,11 @@ class MainWindow(QMainWindow):
         combo.addItems(SCALE_MODES)
         combo.currentTextChanged.connect(self._scale_changed)
         return combo
+
+    def _build_grid_checkbox(self) -> QCheckBox:
+        checkbox = QCheckBox("Grid", self)
+        checkbox.toggled.connect(self._grid_toggled)
+        return checkbox
 
     def _refresh_dataset_table(self) -> None:
         self.dataset_table.setRowCount(len(self._entries))
@@ -241,6 +249,18 @@ class MainWindow(QMainWindow):
     def _show_scale_warning(self, warning: PlotScaleWarning | None) -> None:
         if warning and warning.has_warning:
             QMessageBox.warning(self, "Log scale warning", warning.message())
+
+    def _grid_toggled(self, visible: bool) -> None:
+        try:
+            warning = self.plot_widget.set_grid_visible(visible)
+        except PlotScaleError as exc:
+            self.grid_checkbox.blockSignals(True)
+            self.grid_checkbox.setChecked(not visible)
+            self.grid_checkbox.blockSignals(False)
+            QMessageBox.warning(self, "Grid not applied", str(exc))
+            return
+
+        self._show_scale_warning(warning)
 
     def _open_files(self) -> None:
         paths, _selected_filter = QFileDialog.getOpenFileNames(
