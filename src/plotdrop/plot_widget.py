@@ -94,7 +94,7 @@ class PlotWidget(QWidget):
         self._apply_axis_scale()
         self.axes.set_xlabel("x")
         self.axes.set_ylabel("y")
-        self.axes.grid(self._grid_visible, which="both", linestyle=":", linewidth=0.7, alpha=0.7)
+        self._apply_grid()
         if self.axes.lines:
             self.axes.legend()
         self.figure.tight_layout()
@@ -146,3 +146,10 @@ class PlotWidget(QWidget):
             self.axes.set_yscale("log")
         else:
             self.axes.set_yscale("linear")
+
+    def _apply_grid(self) -> None:
+        if not self._grid_visible:
+            self.axes.grid(False, which="both")
+            return
+
+        self.axes.grid(True, which="both", linestyle=":", linewidth=0.7, alpha=0.7)
